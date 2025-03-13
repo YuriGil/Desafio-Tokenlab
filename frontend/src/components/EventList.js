@@ -3,13 +3,14 @@ import React from 'react';
 const EventList = ({ events }) => {
   return (
     <div>
-      <h2>Events</h2>
+      <h2>Eventos</h2>
       <ul className="list-group">
         {events.map(event => (
           <li key={event._id} className="list-group-item">
             <strong>{event.description}</strong>
-            <p>Start: {new Date(event.startTime).toLocaleString()}</p>
-            <p>End: {new Date(event.endTime).toLocaleString()}</p>
+            <p>Data: {event.date}</p>
+            <p>Início: {event.startTime}</p>
+            <p>Término: {event.endTime}</p>
           </li>
         ))}
       </ul>

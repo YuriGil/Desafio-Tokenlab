@@ -2,21 +2,28 @@ const Event = require('../models/Event');
 
 exports.createEvent = async (req, res) => {
   const { description, startTime, endTime, invitees } = req.body;
+
+ if (isNaN(Date.parse(startTime)) || isNaN(Date.parse(endTime))) {
+   return res.status(400).json({ msg: 'Datas inválidas' });
+}
+
   try {
     const event = new Event({ 
       description, 
-      startTime, 
-      endTime, 
+      startTime: new Date(startTime), 
+      endTime: new Date(endTime), 
       user: req.user.id, 
       invitees 
     });
+
     await event.save();
     res.status(201).json(event);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: 'Erro no servidor' });
   }
 };
+
 
 exports.getEvents = async (req, res) => {
   try {
@@ -68,3 +75,21 @@ exports.deleteEvent = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+exports.getEventsForToday = async (req, res) => {
+  try {
+    const now = new Date();
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(now.setHours(23, 59, 59, 999));
+
+    const events = await Event.find({
+      user: req.user.id,
+      startTime: { $gte: startOfDay, $lte: endOfDay },
+    }).populate('invitees', 'username email');
+
+    res.json(events);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ msg: 'Erro no servidor' });
+  }
+};
+

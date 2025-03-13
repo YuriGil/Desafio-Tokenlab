@@ -12,17 +12,17 @@ exports.register = async (req, res) => {
     if (user) {
       return res.status(400).json({ msg: 'Usuário já existe' });
     }
-
+    
     user = new User({ username, password });
     await user.save();
 
     const payload = { user: { id: user.id } };
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
   } catch (err) {
-    console.error('Erro no servidor:', err.message);
+    console.error(err.message);
     res.status(500).send('Erro no servidor');
   }
 };

@@ -10,18 +10,25 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!username || !password) {
-      setError('Por favor, preencha todos os campos'); // Validação de campos vazios
-      return;
+    
+   if (!username.trim() || !password.trim()) {
+     setError('Usuário e senha são obrigatórios.');
+     return;
     }
+  
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', { username, password });
+      const res = await axios.post('http://localhost:5000/api/auth/register', { 
+        username: username.trim(), 
+        password: password.trim()
+      });
+  
       localStorage.setItem('token', res.data.token);
       navigate('/'); // Redireciona para a página inicial após o registro
     } catch (err) {
-      setError(err.response?.data?.msg || 'Erro ao registrar'); // Exibe mensagem de erro
+      setError(err.response?.data?.msg || 'Erro ao registrar');
     }
   };
+  
 
   return (
     <div className="container">
